@@ -1,0 +1,10 @@
+# SMP Minigames - Boxing
+#
+# Don't hand-edit this file. Set everything up in-game instead:
+#   /box setring1     - stand at one corner of the ring, run this
+#   /box setring2     - stand at the opposite corner, run this
+#   /box setspawn1    - stand where fighter 1 should start (face fighter 2's spot)
+#   /box setspawn2    - stand where fighter 2 should start (face fighter 1's spot)
+#   /box setexit      - stand where fighters should end up after the match
+#
+# The plugin fills in the values below automatically when you run those commands.
