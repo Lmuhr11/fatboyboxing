@@ -9,6 +9,9 @@ commands:
   box:
     description: Boxing minigame commands
     usage: /box <join|leave|setring1|setring2|setspawn1|setspawn2|setexit|reload>
+  mg:
+    description: Mass-teleport everyone online to a world and back again
+    usage: /mg <sendall <world>|returnall>
 
 permissions:
   minigames.box.play:
@@ -16,4 +19,7 @@ permissions:
     default: true
   minigames.box.admin:
     description: Allows configuring the boxing arena
+    default: op
+  minigames.admin:
+    description: Allows using minigames admin utilities like /mg
     default: op
