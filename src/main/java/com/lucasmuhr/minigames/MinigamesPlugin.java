@@ -28,7 +28,7 @@ public class MinigamesPlugin extends JavaPlugin {
             getLogger().warning("Could not register /box - check that plugin.yml was packaged correctly.");
         }
 
-        gatherManager = new GatherManager();
+        gatherManager = new GatherManager(this);
         GatherCommand gatherCommandExecutor = new GatherCommand(gatherManager);
         PluginCommand gatherCommand = getCommand("mg");
         if (gatherCommand != null) {
