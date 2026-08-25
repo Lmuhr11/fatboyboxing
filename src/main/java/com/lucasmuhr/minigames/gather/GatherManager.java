@@ -27,10 +27,9 @@ public class GatherManager {
         Location spawn = destination.getSpawnLocation();
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID uuid = player.getUniqueId();
-            if (savedLocations.containsKey(uuid)) {
-                continue;
+            if (!savedLocations.containsKey(uuid)) {
+                savedLocations.put(uuid, player.getLocation().clone());
             }
-            savedLocations.put(uuid, player.getLocation().clone());
             player.teleport(spreadLocation(spawn, index));
             index++;
             moved++;
