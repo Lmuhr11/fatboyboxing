@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class GatherCommand implements CommandExecutor, TabCompleter {
 
-    private static final List<String> SUBCOMMANDS = Arrays.asList("sendall", "returnall");
+    private static final List<String> SUBCOMMANDS = Arrays.asList("sendall", "returnall", "setspawn");
 
     private final GatherManager manager;
 
@@ -46,11 +47,24 @@ public class GatherCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        if (args.length == 1 && args[0].equalsIgnoreCase("setspawn")) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(ChatColor.RED + "Only players can run this command.");
+                return true;
+            }
+            manager.setSpawn(player.getLocation());
+            sender.sendMessage(ChatColor.GREEN + "Gather spawn for " + player.getWorld().getName()
+                    + " set to your current location.");
+            return true;
+        }
+
         sender.sendMessage(ChatColor.GOLD + "--- Gather ---");
         sender.sendMessage(ChatColor.YELLOW + "/mg sendall <world> " + ChatColor.GRAY
                 + "- teleport every online player to <world>, remembering where they were");
         sender.sendMessage(ChatColor.YELLOW + "/mg returnall " + ChatColor.GRAY
                 + "- teleport everyone sent away back to their remembered spot");
+        sender.sendMessage(ChatColor.YELLOW + "/mg setspawn " + ChatColor.GRAY
+                + "- set the gather point for the world you're standing in (used by /mg sendall)");
         return true;
     }
 
