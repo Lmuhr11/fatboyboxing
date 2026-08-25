@@ -97,10 +97,9 @@ public class GatherManager {
 
     private Location spreadLocation(Location spawn, int index) {
         int[] offset = spiralOffset(index);
-        int x = spawn.getBlockX() + offset[0] * SPACING;
-        int z = spawn.getBlockZ() + offset[1] * SPACING;
-        int y = spawn.getWorld().getHighestBlockYAt(x, z) + 1;
-        return new Location(spawn.getWorld(), x + 0.5, y, z + 0.5, spawn.getYaw(), spawn.getPitch());
+        double x = spawn.getX() + offset[0] * SPACING;
+        double z = spawn.getZ() + offset[1] * SPACING;
+        return new Location(spawn.getWorld(), x, spawn.getY(), z, spawn.getYaw(), spawn.getPitch());
     }
 
     private int[] spiralOffset(int index) {
