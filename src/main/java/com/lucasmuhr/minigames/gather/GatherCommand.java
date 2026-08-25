@@ -15,7 +15,9 @@ import java.util.List;
 
 public class GatherCommand implements CommandExecutor, TabCompleter {
 
-    private static final List<String> SUBCOMMANDS = Arrays.asList("sendall", "returnall", "setspawn");
+    private static final List<String> SUBCOMMANDS = Arrays.asList(
+            "sendall", "returnall", "setspawn", "setarea1", "setarea2"
+    );
 
     private final GatherManager manager;
 
@@ -58,6 +60,23 @@ public class GatherCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        if (args.length == 1 && (args[0].equalsIgnoreCase("setarea1") || args[0].equalsIgnoreCase("setarea2"))) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(ChatColor.RED + "Only players can run this command.");
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("setarea1")) {
+                manager.setArea1(player.getLocation());
+                sender.sendMessage(ChatColor.GREEN + "Gather area corner 1 for " + player.getWorld().getName()
+                        + " set to your current location.");
+            } else {
+                manager.setArea2(player.getLocation());
+                sender.sendMessage(ChatColor.GREEN + "Gather area corner 2 for " + player.getWorld().getName()
+                        + " set to your current location.");
+            }
+            return true;
+        }
+
         sender.sendMessage(ChatColor.GOLD + "--- Gather ---");
         sender.sendMessage(ChatColor.YELLOW + "/mg sendall <world> " + ChatColor.GRAY
                 + "- teleport every online player to <world>, remembering where they were");
@@ -65,6 +84,9 @@ public class GatherCommand implements CommandExecutor, TabCompleter {
                 + "- teleport everyone sent away back to their remembered spot");
         sender.sendMessage(ChatColor.YELLOW + "/mg setspawn " + ChatColor.GRAY
                 + "- set the gather point for the world you're standing in (used by /mg sendall)");
+        sender.sendMessage(ChatColor.YELLOW + "/mg setarea1 " + ChatColor.GRAY
+                + "- set gather area corner 1 (with setarea2, keeps everyone inside these two corners)");
+        sender.sendMessage(ChatColor.YELLOW + "/mg setarea2 " + ChatColor.GRAY + "- set gather area corner 2");
         return true;
     }
 
