@@ -216,10 +216,11 @@ public class BoxingManager implements Listener {
         event.setDroppedExp(0);
         event.setDeathMessage(null);
 
-        Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD
-                + (winner != null ? winner.getName() : "Someone") + ChatColor.RESET + ChatColor.YELLOW
-                + " has won the boxing match against " + ChatColor.GOLD + victim.getName() + ChatColor.YELLOW
-                + "! Talk to staff to claim your prize.");
+String winnerName = winner != null ? winner.getName() : "Someone";
+Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD
+        + winnerName + ChatColor.RESET + ChatColor.YELLOW
+        + " has won the boxing match against " + ChatColor.GOLD + victim.getName() + ChatColor.YELLOW
+        + "! " + ChatColor.GOLD + winnerName + ChatColor.YELLOW + ", talk to staff to claim your prize.");
 
         awaitingCustomRespawn.add(victimId);
         currentMatch = null;
