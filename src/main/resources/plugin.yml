@@ -8,7 +8,7 @@ description: SMP minigames for the server - boxing first, more to come.
 commands:
   box:
     description: Boxing minigame commands
-    usage: /box <join <player>|leave <player>|setring1|setring2|setspawn1|setspawn2|setexit|sethideout|hideout|reload>
+    usage: /box <join <player>|leave <player>|setring1|setring2|setspawn1|setspawn2|setexit|setboxingadmin|boxingadmin|reload>
   mg:
     description: Mass-teleport everyone online to a world and back again
     usage: /mg <sendall <world>|returnall>
