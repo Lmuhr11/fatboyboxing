@@ -42,7 +42,7 @@ import java.util.UUID;
  *  - fighters start with an empty inventory, full health and full hunger
  *  - only fists work - items can't be picked up or dropped during a match
  *  - the loser respawns at the configured exit point, never at their bed
- *  - nobody can hit anybody in the arena world outside the ring, except ops
+ *  - players are unhittable in the arena world unless both are standing inside the ring, except ops
  *  - the arena world itself is protected from block break/place by non-ops
  */
 public class BoxingManager implements Listener {
@@ -325,11 +325,7 @@ public class BoxingManager implements Listener {
             return;
         }
 
-        boolean isActiveMatch = currentMatch != null
-                && currentMatch.has(attacker.getUniqueId())
-                && currentMatch.has(defender.getUniqueId());
-
-        if (isActiveMatch && ring.contains(attacker.getLocation()) && ring.contains(defender.getLocation())) {
+        if (ring.contains(attacker.getLocation()) && ring.contains(defender.getLocation())) {
             return;
         }
 
