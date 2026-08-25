@@ -410,12 +410,12 @@ public class BoxingManager implements Listener {
         saveLocation("exit", loc, true);
     }
 
-    public void setHideout(Location loc) {
-        saveLocation("hideout", loc, true);
+    public void setBoxingAdmin(Location loc) {
+        saveLocation("boxingadmin", loc, true);
     }
 
-    public Location getHideout() {
-        return loadLocation("hideout", true);
+    public Location getBoxingAdmin() {
+        return loadLocation("boxingadmin", true);
     }
 
     public void reloadArenaConfig() {
