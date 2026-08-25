@@ -38,7 +38,7 @@ import java.util.UUID;
  * Handles the boxing queue, match state, arena protection and cleanup.
  *
  * Rules enforced here:
- *  - players self-queue with /box join, matches auto-start once 2 are queued
+ *  - staff queue players by name with /box join <player>, matches auto-start once 2 are queued
  *  - fighters start with an empty inventory, full health and full hunger
  *  - only fists work - items can't be picked up or dropped during a match
  *  - the loser respawns at the configured exit point, never at their bed
@@ -62,36 +62,40 @@ public class BoxingManager implements Listener {
     // Queue / match lifecycle
     // ----------------------------------------------------------------
 
-    public void joinQueue(Player player) {
+    /**
+     * Queues the given player for boxing. Returns an error message to show the
+     * command sender, or null on success.
+     */
+    public String joinQueue(Player player) {
         UUID uuid = player.getUniqueId();
 
         if (currentMatch != null && currentMatch.has(uuid)) {
-            player.sendMessage(ChatColor.RED + "You're already in a boxing match!");
-            return;
+            return player.getName() + " is already in a boxing match!";
         }
         if (queue.contains(uuid)) {
-            player.sendMessage(ChatColor.RED + "You're already in the boxing queue.");
-            return;
+            return player.getName() + " is already in the boxing queue.";
         }
         if (!isArenaConfigured()) {
-            player.sendMessage(ChatColor.RED + "The boxing arena isn't set up yet - ask an op to run "
-                    + "/box setring1, setring2, setspawn1, setspawn2 and setexit first.");
-            return;
+            return "The boxing arena isn't set up yet - run /box setring1, setring2, setspawn1, setspawn2 and setexit first.";
         }
 
         queue.add(uuid);
         Bukkit.broadcastMessage(ChatColor.GOLD + player.getName() + ChatColor.YELLOW
                 + " has entered the boxing queue! (" + queue.size() + " waiting)");
         tryStartMatch();
+        return null;
     }
 
-    public void leaveQueue(Player player) {
+    /**
+     * Removes the given player from the queue. Returns an error message to show
+     * the command sender, or null on success.
+     */
+    public String leaveQueue(Player player) {
         UUID uuid = player.getUniqueId();
         if (queue.remove(uuid)) {
-            player.sendMessage(ChatColor.YELLOW + "You left the boxing queue.");
-        } else {
-            player.sendMessage(ChatColor.RED + "You're not in the boxing queue.");
+            return null;
         }
+        return player.getName() + " isn't in the boxing queue.";
     }
 
     private void tryStartMatch() {
@@ -177,9 +181,9 @@ public class BoxingManager implements Listener {
         player.setFoodLevel(20);
         player.setSaturation(20f);
 
-        Location exit = getExit();
-        if (exit != null) {
-            player.teleport(exit);
+        Location destination = snapshot != null ? snapshot.returnLocation : getExit();
+        if (destination != null) {
+            player.teleport(destination);
         }
     }
 
@@ -187,7 +191,11 @@ public class BoxingManager implements Listener {
         for (Map.Entry<UUID, PlayerSnapshot> entry : snapshots.entrySet()) {
             Player player = Bukkit.getPlayer(entry.getKey());
             if (player != null) {
-                entry.getValue().restore(player);
+                PlayerSnapshot snapshot = entry.getValue();
+                snapshot.restore(player);
+                if (snapshot.returnLocation != null) {
+                    player.teleport(snapshot.returnLocation);
+                }
             }
         }
         snapshots.clear();
@@ -216,11 +224,11 @@ public class BoxingManager implements Listener {
         event.setDroppedExp(0);
         event.setDeathMessage(null);
 
-String winnerName = winner != null ? winner.getName() : "Someone";
-Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD
-        + winnerName + ChatColor.RESET + ChatColor.YELLOW
-        + " has won the boxing match against " + ChatColor.GOLD + victim.getName() + ChatColor.YELLOW
-        + "! " + ChatColor.GOLD + winnerName + ChatColor.YELLOW + ", talk to staff to claim your prize.");
+        String winnerName = winner != null ? winner.getName() : "Someone";
+        Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD
+                + winnerName + ChatColor.RESET + ChatColor.YELLOW
+                + " has won the boxing match against " + ChatColor.GOLD + victim.getName() + ChatColor.YELLOW
+                + "! " + ChatColor.GOLD + winnerName + ChatColor.YELLOW + ", talk to staff to claim your prize.");
 
         awaitingCustomRespawn.add(victimId);
         currentMatch = null;
@@ -243,15 +251,16 @@ Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD
             return;
         }
 
-        Location exit = getExit();
-        if (exit != null) {
-            event.setRespawnLocation(exit);
+        PlayerSnapshot snapshot = snapshots.get(uuid);
+        Location destination = (snapshot != null && snapshot.returnLocation != null) ? snapshot.returnLocation : getExit();
+        if (destination != null) {
+            event.setRespawnLocation(destination);
         }
 
         Bukkit.getScheduler().runTask(plugin, () -> {
-            PlayerSnapshot snapshot = snapshots.remove(uuid);
-            if (snapshot != null) {
-                snapshot.restore(player);
+            PlayerSnapshot removed = snapshots.remove(uuid);
+            if (removed != null) {
+                removed.restore(player);
             }
             player.setFoodLevel(20);
             player.setSaturation(20f);
@@ -405,6 +414,14 @@ Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD
         saveLocation("exit", loc, true);
     }
 
+    public void setHideout(Location loc) {
+        saveLocation("hideout", loc, true);
+    }
+
+    public Location getHideout() {
+        return loadLocation("hideout", true);
+    }
+
     public void reloadArenaConfig() {
         plugin.reloadConfig();
     }
@@ -491,12 +508,14 @@ Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD
         final ItemStack[] armorContents;
         final ItemStack offHand;
         final GameMode gameMode;
+        final Location returnLocation;
 
         PlayerSnapshot(Player player) {
             this.inventoryContents = cloneArray(player.getInventory().getContents());
             this.armorContents = cloneArray(player.getInventory().getArmorContents());
             this.offHand = player.getInventory().getItemInOffHand().clone();
             this.gameMode = player.getGameMode();
+            this.returnLocation = player.getLocation().clone();
         }
 
         void restore(Player player) {
