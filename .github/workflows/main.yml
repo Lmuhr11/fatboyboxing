@@ -23,5 +23,5 @@ jobs:
       - name: Upload plugin jar
         uses: actions/upload-artifact@v4
         with:
-          name: smp-minigames-plugin
-          path: target/smp-minigames.jar
+          name: boxing-plugin
+          path: target/boxing.jar
