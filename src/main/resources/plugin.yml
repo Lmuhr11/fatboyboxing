@@ -11,7 +11,7 @@ commands:
     usage: /box <join <player>|leave <player>|setring1|setring2|setspawn1|setspawn2|setexit|setboxingadmin|boxingadmin|reload>
   mg:
     description: Mass-teleport everyone online to a world and back again
-    usage: /mg <sendall <world>|returnall|setspawn>
+    usage: /mg <sendall <world>|returnall|setspawn|setarea1|setarea2>
 
 permissions:
   minigames.box.admin:
