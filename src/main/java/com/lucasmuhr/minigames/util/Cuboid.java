@@ -36,4 +36,28 @@ public class Cuboid {
     public World getWorld() {
         return world;
     }
+
+    public double getMinX() {
+        return minX;
+    }
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public double getMinY() {
+        return minY;
+    }
+
+    public double getMaxY() {
+        return maxY;
+    }
+
+    public double getMinZ() {
+        return minZ;
+    }
+
+    public double getMaxZ() {
+        return maxZ;
+    }
 }
