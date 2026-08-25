@@ -29,9 +29,11 @@ public class MinigamesPlugin extends JavaPlugin {
         }
 
         gatherManager = new GatherManager();
+        GatherCommand gatherCommandExecutor = new GatherCommand(gatherManager);
         PluginCommand gatherCommand = getCommand("mg");
         if (gatherCommand != null) {
-            gatherCommand.setExecutor(new GatherCommand(gatherManager));
+            gatherCommand.setExecutor(gatherCommandExecutor);
+            gatherCommand.setTabCompleter(gatherCommandExecutor);
         } else {
             getLogger().warning("Could not register /mg - check that plugin.yml was packaged correctly.");
         }
