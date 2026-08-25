@@ -6,8 +6,15 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 
-public class GatherCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class GatherCommand implements CommandExecutor, TabCompleter {
+
+    private static final List<String> SUBCOMMANDS = Arrays.asList("sendall", "returnall");
 
     private final GatherManager manager;
 
@@ -45,5 +52,28 @@ public class GatherCommand implements CommandExecutor {
         sender.sendMessage(ChatColor.YELLOW + "/mg returnall " + ChatColor.GRAY
                 + "- teleport everyone sent away back to their remembered spot");
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 1) {
+            List<String> matches = new ArrayList<>();
+            for (String sub : SUBCOMMANDS) {
+                if (sub.startsWith(args[0].toLowerCase())) {
+                    matches.add(sub);
+                }
+            }
+            return matches;
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("sendall")) {
+            List<String> matches = new ArrayList<>();
+            for (World world : Bukkit.getWorlds()) {
+                if (world.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
+                    matches.add(world.getName());
+                }
+            }
+            return matches;
+        }
+        return new ArrayList<>();
     }
 }
