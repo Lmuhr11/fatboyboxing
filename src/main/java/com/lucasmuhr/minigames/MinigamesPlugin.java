@@ -2,12 +2,15 @@ package com.lucasmuhr.minigames;
 
 import com.lucasmuhr.minigames.boxing.BoxingCommand;
 import com.lucasmuhr.minigames.boxing.BoxingManager;
+import com.lucasmuhr.minigames.gather.GatherCommand;
+import com.lucasmuhr.minigames.gather.GatherManager;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MinigamesPlugin extends JavaPlugin {
 
     private BoxingManager boxingManager;
+    private GatherManager gatherManager;
 
     @Override
     public void onEnable() {
@@ -25,6 +28,14 @@ public class MinigamesPlugin extends JavaPlugin {
             getLogger().warning("Could not register /box - check that plugin.yml was packaged correctly.");
         }
 
+        gatherManager = new GatherManager();
+        PluginCommand gatherCommand = getCommand("mg");
+        if (gatherCommand != null) {
+            gatherCommand.setExecutor(new GatherCommand(gatherManager));
+        } else {
+            getLogger().warning("Could not register /mg - check that plugin.yml was packaged correctly.");
+        }
+
         getLogger().info("SMP Minigames enabled - boxing is ready.");
     }
 
@@ -32,6 +43,9 @@ public class MinigamesPlugin extends JavaPlugin {
     public void onDisable() {
         if (boxingManager != null) {
             boxingManager.shutdown();
+        }
+        if (gatherManager != null) {
+            gatherManager.shutdown();
         }
     }
 }
