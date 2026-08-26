@@ -42,7 +42,7 @@ import java.util.UUID;
  *  - fighters start with an empty inventory, full health and full hunger
  *  - only fists work - items can't be picked up or dropped during a match
  *  - the loser respawns at the configured exit point, never at their bed
- *  - players are unhittable in the arena world unless both are standing inside the ring, except ops
+ *  - nobody can hit anybody in the arena world outside the ring, except ops
  *  - the arena world itself is protected from block break/place by non-ops
  */
 public class BoxingManager implements Listener {
@@ -223,6 +223,8 @@ public class BoxingManager implements Listener {
         event.getDrops().clear();
         event.setDroppedExp(0);
         event.setDeathMessage(null);
+
+        incrementWins(winnerId);
 
         String winnerName = winner != null ? winner.getName() : "Someone";
         Bukkit.broadcastMessage(ChatColor.GOLD + "" + ChatColor.BOLD
@@ -420,6 +422,22 @@ public class BoxingManager implements Listener {
 
     public void reloadArenaConfig() {
         plugin.reloadConfig();
+    }
+
+    // ----------------------------------------------------------------
+    // Win tracking - only incremented on an actual kill inside the ring
+    // during a match, never on a forfeit
+    // ----------------------------------------------------------------
+
+    public int getWins(UUID playerId) {
+        return plugin.getConfig().getInt("wins." + playerId);
+    }
+
+    private void incrementWins(UUID playerId) {
+        FileConfiguration cfg = plugin.getConfig();
+        String path = "wins." + playerId;
+        cfg.set(path, cfg.getInt(path) + 1);
+        plugin.saveConfig();
     }
 
     private Cuboid getRing() {
