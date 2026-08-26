@@ -2,8 +2,10 @@ package com.lucasmuhr.minigames;
 
 import com.lucasmuhr.minigames.boxing.BoxingCommand;
 import com.lucasmuhr.minigames.boxing.BoxingManager;
+import com.lucasmuhr.minigames.boxing.BoxingPlaceholders;
 import com.lucasmuhr.minigames.gather.GatherCommand;
 import com.lucasmuhr.minigames.gather.GatherManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,6 +28,11 @@ public class MinigamesPlugin extends JavaPlugin {
             boxCommand.setTabCompleter(boxingCommand);
         } else {
             getLogger().warning("Could not register /box - check that plugin.yml was packaged correctly.");
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new BoxingPlaceholders(boxingManager).register();
+            getLogger().info("Registered %boxing_wins% with PlaceholderAPI.");
         }
 
         gatherManager = new GatherManager(this);
