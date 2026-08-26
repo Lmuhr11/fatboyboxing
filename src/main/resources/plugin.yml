@@ -4,6 +4,7 @@ main: com.lucasmuhr.minigames.MinigamesPlugin
 api-version: '1.21'
 author: lucasmuhr
 description: SMP minigames for the server - boxing first, more to come.
+softdepend: [PlaceholderAPI]  
 
 commands:
   box:
